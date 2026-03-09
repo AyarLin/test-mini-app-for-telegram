@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>အစမ်း Mini App</title>
+  
+  <!-- Telegram Web App SDK ကို ထည့်ပါ (အရေးကြီးဆုံး) -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: var(--tg-theme-bg-color, #ffffff);
+      color: var(--tg-theme-text-color, #000000);
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.3rem;
+      margin: 1rem 0;
+    }
+    button {
+      background: var(--tg-theme-button-color, #0088cc);
+      color: var(--tg-theme-button-text-color, #ffffff);
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 2rem;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    #status {
+      margin-top: 1.5rem;
+      font-size: 1.1rem;
+      color: var(--tg-theme-hint-color, #888);
+    }
+  </style>
+</head>
+<body>
+
+  <h1>မင်္ဂလာပါ Telegram Mini App!</h1>
+  <p id="greeting">ခဏစောင့်ပါ...</p>
+  <p id="info"></p>
+  <button id="actionBtn">နှိပ်ကြည့်ပါ</button>
+  <div id="status">ခလုတ်နှိပ်ရင် တစ်ခုခု ဖြစ်လာမယ် 😄</div>
+
+  <script>
+    // Telegram WebApp object ကို ယူပါ
+    const tg = window.Telegram.WebApp;
+
+    // 1. App အဆင်သင့်ဖြစ်ပြီလို့ ပြောပါ (loading ပျောက်သွားမယ်)
+    tg.ready();
+
+    // 2. ဖြစ်နိုင်ရင် အပြည့်အဝ ချဲ့ပါ (fullscreen လိုမျိုး)
+    tg.expand();
+
+    // 3. အသုံးပြုသူ အချက်အလက်ကို ယူပါ (initDataUnsafe က လွယ်ကူဆုံး)
+    const user = tg.initDataUnsafe?.user;
+
+    if (user) {
+      const name = user.first_name || user.username || "သူငယ်ချင်း";
+      document.getElementById("greeting").innerText = `မင်္ဂလာပါ၊ ${name}! 👋`;
+      document.getElementById("info").innerText = 
+        `ID: ${user.id} | ဘာသာစကား: ${user.language_code || "မသိရ"}`;
+    } else {
+      document.getElementById("greeting").innerText = "မင်္ဂလာပါ ဧည့်သည်!";
+    }
+
+    // 4. ခလုတ်ကို နှိပ်ရင် လုပ်ဆောင်ချက်
+    document.getElementById("actionBtn").addEventListener("click", () => {
+      const status = document.getElementById("status");
+      status.innerText = "ခလုတ်နှိပ်လိုက်ပြီ! 🎉";
+      
+      // လိုချင်ရင် bot ကို ဒေတာ ပြန်ပို့နိုင်တယ် (sendData)
+      tg.sendData("ခလုတ်နှိပ်လိုက်ပါပြီ! ကျေးဇူးတင်ပါတယ် 😊");
+      
+      // ခဏနေ ပြန်ပြီး အသစ်ရေးလိုက်မယ်
+      setTimeout(() => {
+        status.innerText = "နောက်တစ်ခါ နှိပ်ကြည့်ပါ 😉";
+      }, 2000);
+    });
+
+    // Optional: Theme ပြောင်းရင် အလိုအလျောက် လိုက်ပြောင်းအောင် (CSS var တွေက လုပ်ပေးပြီးသား)
+    tg.onEvent("themeChanged", () => {
+      console.log("Theme ပြောင်းလဲသွားပါပြီ:", tg.colorScheme);
+    });
+  </script>
+
+</body>
+</html>
